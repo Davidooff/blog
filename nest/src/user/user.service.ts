@@ -11,7 +11,9 @@ export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async login(loginData: UserAuthData): Promise<ReturnTokens> {
-    const userDB = await this.userModel.findOne({ login: loginData }).lean();
+    const userDB = await this.userModel
+      .findOne({ login: loginData.login })
+      .lean();
     if (!userDB) {
       throw new Error(`User ${loginData.login} not found`);
     }
@@ -22,5 +24,24 @@ export class UserService {
     const { _id, role, login } = userDB;
     const tokens = createTokens({ _id: _id.toString(), role, login });
     return tokens;
+  }
+
+  async register(registerData: UserAuthData): Promise<boolean> {
+    const userDB = await this.userModel.findOne({ login: registerData.login });
+    if (userDB) {
+      throw new UnauthorizedException(
+        `User ${registerData.login} already exist`,
+      );
+    }
+
+    await this.userModel
+      .create(registerData)
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+    throw new Error();
   }
 }

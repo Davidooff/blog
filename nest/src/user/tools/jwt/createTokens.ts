@@ -13,16 +13,16 @@ async function creatTokens(data: TokensData): Promise<ReturnTokens> {
       _id,
       login,
       role,
-      exp: process.env.JWT_ACCESS_ALIVE,
     },
     process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_REFRESH_ALIVE },
   );
   let refreshToken = sign(
     {
       _id,
-      exp: process.env.JWT_REFRESH_ALIVE,
     },
     process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_REFRESH_ALIVE },
   );
   await Promise.all([accessToken, refreshToken]);
   return { accessToken, refreshToken };
