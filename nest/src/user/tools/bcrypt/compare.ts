@@ -1,16 +1,18 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { compare } from 'bcrypt';
 
-export default async function compareHash(
+export default function compareHash(
   hashToCompare: string,
   hash: string,
-): Promise<string> {
-  return compare(hashToCompare, hash, function (err: Error, result: string) {
+): boolean {
+  let res: boolean;
+  compare(hashToCompare, hash, (err: Error, result: boolean) => {
+    console.log(err);
+    console.log(result);
     if (err) {
-      throw err;
-    } else if (result) {
-      return result;
-    } else {
-      throw new Error('Unexpected error');
+      throw new UnauthorizedException(err);
     }
+    res = result;
   });
+  return res;
 }

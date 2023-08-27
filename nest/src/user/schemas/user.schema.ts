@@ -17,8 +17,8 @@ export class User {
   @Prop({ required: true, type: String, enum: Roles, default: Roles.User })
   role: Roles;
 
-  @Prop({ required: false, type: String })
-  refreshTokens: string[];
+  @Prop({ required: false, type: [String] })
+  refreshTokens: [string];
 
   // @Prop({
   //   required: false,
